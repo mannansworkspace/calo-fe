@@ -29,7 +29,7 @@ const paginationModel = { page: 0, pageSize: 50 };
 
 export default function AppJobs() {
   const navigate = useNavigate();
-  const jobsRef = React.useRef<Jobs>((useLoaderData() || []) as Jobs);
+  let jobs = useLoaderData() as Jobs;
   const [currentJob, setCurrentJob] = React.useState<AppJob | null>(null);
 
   const transformServerJobs = (jobs: Jobs) => {
@@ -37,7 +37,7 @@ export default function AppJobs() {
   };
 
   const [appJobs, setAppJobs] = React.useState<AppJob[]>(
-    transformServerJobs(jobsRef.current)
+    transformServerJobs(jobs)
   );
 
   React.useEffect(() => {
@@ -49,8 +49,9 @@ export default function AppJobs() {
         if (data) {
           switch (data.type) {
             case "mutation": {
-              const jobs = {
-                ...jobsRef.current,
+              // eslint-disable-next-line
+              jobs = {
+                ...jobs,
                 [data.job.id]: data.job,
               };
               setAppJobs(transformServerJobs(jobs));
